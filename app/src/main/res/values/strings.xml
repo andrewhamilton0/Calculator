@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NewCalc</string>
+    <string name="format_error">Format error</string>
+</resources>
