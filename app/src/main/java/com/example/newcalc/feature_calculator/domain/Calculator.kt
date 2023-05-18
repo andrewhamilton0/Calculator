@@ -1,14 +1,47 @@
 package com.example.newcalc.feature_calculator.domain
 
-import com.example.newcalc.feature_calculator.domain.CalculationOutcomes
+import org.mariuszgromada.math.mxparser.*
 
 object Calculator {
 
     fun calculate(s: String): CalculationOutcomes {
-        return CalculationOutcomes.Success("44") //TODO
+        val expressionWithAsterisks = addsAsterisksToStringsBetweenParenthesesAndNumbers(s)
+        val answerAsDouble = Expression(expressionWithAsterisks).calculate()
+
+        if(answerAsDouble.isNaN()) return CalculationOutcomes.Error
+        val answer = formatDouble(answerAsDouble)
+
+        return CalculationOutcomes.Success(answer)
     }
 
-    suspend fun openOrClosedParentheses(s: String): String{
-        return ")" //TODO
+    private fun addsAsterisksToStringsBetweenParenthesesAndNumbers(s: String): String {
+        val newString = StringBuilder()
+        s.mapIndexed { index, c ->
+            try {
+                if(c == '(' && s[index-1].isDigit()){
+                    newString.append("*")
+                }
+            } catch (_: Exception){
+                Unit
+            }
+            newString.append(c)
+            try {
+                if(c == ')' && s[index + 1].isDigit()){
+                    newString.append("*")
+                }
+            } catch (_: Exception) {
+                Unit
+            }
+        }
+        return newString.toString()
+    }
+
+    private fun formatDouble(number: Double): String {
+        val formattedNumber = number.toString()
+        return if (formattedNumber.contains('.')) {
+            formattedNumber.trimEnd('0').removeSuffix(".")
+        } else {
+            formattedNumber
+        }
     }
 }

@@ -53,7 +53,6 @@ class CalculatorViewModel: ViewModel() {
     }
 
     private fun calculate(){
-        println("HEY")
         viewModelScope.launch {
             val s = currentInput.value
             val result = Calculator.calculate(s)
@@ -117,23 +116,13 @@ class CalculatorViewModel: ViewModel() {
             val result = Calculator.calculate(s)
             when(result){
                 is CalculationOutcomes.Success -> {
-                    state = if(!s.contains("*") || !s.contains("/") || !s.contains("+") || !s.contains("-")){
-                        state.copy(
-                            previewCalculation = UiCalculatorScreenState.NoError(
-                                UiText.DynamicString(
-                                    ""
-                                )
+                    state = state.copy(
+                        previewCalculation = UiCalculatorScreenState.NoError(
+                            UiText.DynamicString(
+                                convertArithmeticToOutputString(result.string)
                             )
                         )
-                    } else {
-                        state.copy(
-                            previewCalculation = UiCalculatorScreenState.NoError(
-                                UiText.DynamicString(
-                                    convertArithmeticToOutputString(s)
-                                )
-                            )
-                        )
-                    }
+                    )
                 }
                 else -> Unit
             }
